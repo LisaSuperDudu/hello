@@ -2,10 +2,11 @@ package main
 
 import "net/http"
 
-func Sum(a int, b int) int {
-  return a + b
+func handler(w http.ResponseWriter, r *http.Request) {
+
 }
 
 func main() {
+  http.HandleFunc("/", handler)
   http.ListenAndServe(":8080", nil)
 }
