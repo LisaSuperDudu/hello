@@ -1,33 +1,32 @@
 package main
 
 import (
-  "net/http"
-  "fmt"
-  "net"
+	"fmt"
+	"net"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-  fmt.Fprintf(w, "how did we get here?")
+func main() {
+	listener, err := net.Listen("tcp", "localhost:8080")
+
+	if err != nil {
+		fmt.Printf("Couldn't listen for incoming connection : %s", err)
+	}
+
+	fmt.Println("Listening for incoming connection")
+
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			fmt.Printf("Couldn't accept incoming connection: %s", err)
+		}
+		fmt.Println("Incoming connection accepted")
+		go HandleConnection(conn)
+	}
+
 }
 
-func main() {
-  // http.HandleFunc("/", handler)
-  // http.ListenAndServe(":8080", nil)
-  listener, err := net.Listen("tcp", "localhost:8080")
-
-  if err != nil {
-    fmt.Printf("Couldn't listen for incoming connection : %s", err)
-  }
-
-  fmt.Println("Listening for incoming connection")
-
-  for {
-    conn, err := listener.Accept()
-    if err != nil {
-      fmt.Printf("Couldn't accept incoming connection: %s", err)
-    }
-    conn.Close()
-  }
-
-
+func HandleConnection(conn net.Conn) {
+	fmt.Fprint(conn, "HTTP/1.0 200 OK\r\n\r\n")
+	fmt.Fprint(conn, "Hi there\r\n")
+	conn.Close()
 }
