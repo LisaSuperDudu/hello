@@ -9,8 +9,6 @@ import (
 
 func TestServer(t *testing.T) {
 	go main()
-
-	//Test Launch Server
 	conn, err := net.Dial("tcp", "localhost:8080")
 
 	if err != nil {
@@ -18,8 +16,9 @@ func TestServer(t *testing.T) {
 		return
 	}
 
-	//Test that server response to a Get request
-	fmt.Fprintf(conn, "GET / HTTP/1.0\r\n\r\n")
+	//Test that server responds to a Get request
+	request := "GET / HTTP/1.1\r\n\r\n"
+	fmt.Fprintf(conn, request)
 
 	response := bufio.NewReader(conn)
 
@@ -31,7 +30,7 @@ func TestServer(t *testing.T) {
 	}
 
 
-	expectedStatusLine := "HTTP/1.0 200 OK\r\n"
+	expectedStatusLine := "HTTP/1.1 200 OK\r\n"
 	if statusLine != expectedStatusLine {
 		t.Errorf("We expected: %s but we got: %s", expectedStatusLine, statusLine)
 		return
@@ -64,7 +63,4 @@ func TestServer(t *testing.T) {
 	}
 
 	return
-	//_, err := response.ReadString('\n')
-	//assertEquals("how did we get here?", body, t)
-
 }
